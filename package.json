@@ -1,0 +1,29 @@
+{
+  "name": "kpl-project-archiver",
+  "version": "0.0.1",
+  "description": "Send all cards in done column in a e-mail and remove it from project",
+  "main": "index.js",
+  "bin": {
+    "kpl-packager": "./index.js"
+  },
+  "scripts": {
+    "test": "test"
+  },
+  "keywords": [
+    "kpl",
+    "packager",
+    "prs"
+  ],
+  "author": "Gustavo Felizola",
+  "license": "ISC",
+  "dependencies": {
+    "cli-spinner": "^0.2.6",
+    "colors": "^1.1.2",
+    "fetchival": "^0.3.2",
+    "inquirer": "^3.0.6",
+    "lodash": "^4.17.4",
+    "moment": "^2.18.1",
+    "node-fetch": "^1.6.3",
+    "sendgrid": "^5.0.0"
+  }
+}
