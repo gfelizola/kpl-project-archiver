@@ -20,6 +20,22 @@ spinner.setSpinnerString("⣾⣽⣻⢿⡿⣟⣯⣷");
 // Global
 var cards, deleteCards = false;
 
+const mainProcess = function( deletedCards ) {
+
+    getCards().then( 
+            loadIssues 
+        ).then( 
+            sendMail
+        ).then( envioOk => {
+            if(envioOk && deletedCards) { removeCardsOnProject(); }
+        }).catch( err => {
+            spinner.stop(true);
+            console.log('Erro no processo principal'.red);
+            console.log( err );
+            return false;
+    });
+}
+
 const onError = err => {
     console.error(err);
     spinner.stop(true);
@@ -29,14 +45,11 @@ const getCards = function(){
     spinner.setSpinnerTitle('Carregando projeto/cards');
     spinner.start();
 
-    api('projects/columns/882651/cards')
+    return api('projects/columns/882651/cards')
         .get()
         .then( data => {
             spinner.stop(true);
-
-            cards = data;
-            loadIssues( cards );
-
+            return data;
         })
         .catch( onError );
 }
@@ -47,7 +60,7 @@ const loadIssues = function( data ) {
 
     // let lastCommits = _.takeRight(data, 2);
 
-    Promise.all(
+    return Promise.all(
         data.map( issue => {
             let issueUrl = issue.content_url.replace('https://api.github.com/','');
             return api( issueUrl ).get();
@@ -81,7 +94,7 @@ const loadIssues = function( data ) {
         mailBody += `</ul>
         <p>E-mail enviado em ${ moment().format('DD/MM/YYYY HH:mm') } por kpl-project-archiver</p>`
 
-        sendMail( mailBody );
+        return mailBody;
     });
 }
 
@@ -91,16 +104,17 @@ const sendMail = function( mailBody ) {
 
     let subject    = `Fechamento de items Done do projeto de Features - ${ moment().format('DD/MM/YYYY HH:mm') }`;
 
-    mailer( mailBody, subject ).then( response => {
+    return mailer( mailBody, subject ).then( response => {
         spinner.stop(true);
 
-        console.log( 'Email enviado'.green );
-        removeCardsOnProject();
+        console.log( 'E-mail enviado'.green );
+        return true;
 
     }).catch( err => {
         spinner.stop(true);
         console.log('Erro no envio de e-mail'.red);
         console.log( err );
+        return false;
     });
 };
 
@@ -135,5 +149,5 @@ inquirer.prompt([{
 }]).then(answers => {
     deleteCards      = answers.deleteCards === 'sim';
 
-    getCards();
+    mainProcess( deleteCards );
 });
