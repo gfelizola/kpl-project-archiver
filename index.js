@@ -22,11 +22,10 @@ var cards, deleteCards = false;
 
 const mainProcess = function( deletedCards ) {
 
-    getCards().then( 
-            loadIssues 
-        ).then( 
-            sendMail
-        ).then( envioOk => {
+    getCards()
+        .then( loadIssues )
+        .then( sendMail )
+        .then( envioOk => {
             if(envioOk && deletedCards) { removeCardsOnProject(); }
         }).catch( err => {
             spinner.stop(true);
@@ -49,7 +48,7 @@ const getCards = function(){
         .get()
         .then( data => {
             spinner.stop(true);
-            return data;
+            return cards = data;
         })
         .catch( onError );
 }
@@ -122,8 +121,6 @@ const removeCardsOnProject = function() {
     if ( deleteCards ) {
         spinner.setSpinnerTitle('Arquivando cards');
         spinner.start();
-
-        // let card = _.last( cards );
 
         Promise.all(
             cards.map(

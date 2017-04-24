@@ -1,6 +1,6 @@
 {
   "name": "kpl-project-archiver",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Send all cards in done column in a e-mail and remove it from project",
   "main": "index.js",
   "bin": {
